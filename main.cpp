@@ -1,12 +1,13 @@
+#include <iostream>
+
+#include <dmtx.h>
+#include <opencv2/core.hpp>
+#include <torch/torch.h>
+#include <NumCpp.hpp>
+
 #include <aws/lambda-runtime/runtime.h>
 #include <aws/core/utils/json/JsonSerializer.h>
 #include <aws/core/utils/memory/stl/SimpleStringStream.h>
-#include <torch/torch.h>
-#include <dmtx.h>
-#include <iostream>
-#include <opencv2/core.hpp>
-#include <NumCpp.hpp>
-
 
 using namespace aws::lambda_runtime;
 
