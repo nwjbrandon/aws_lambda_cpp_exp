@@ -20,26 +20,29 @@ invocation_response my_handler(invocation_request const& request)
         return invocation_response::failure("Failed to parse input JSON", "InvalidJSON");
     }
     std::cout << "Hello World!" << std::endl;
-    std::cout << "DMTX Version" << DmtxVersion << std::endl;
-    std::cout << "OPENCV Version" << CV_VERSION << std::endl;
 
     std::cout << "Test Numpy!" << std::endl;
-
     auto a = nc::random::randInt<int>({10, 10}, 0, 100);
     std::cout << a <<std::endl;
 
-    std::cout << "PyTorch version: "
-        << TORCH_VERSION_MAJOR << "."
-        << TORCH_VERSION_MINOR << "."
-        << TORCH_VERSION_PATCH << std::endl;
-
     auto v = json.View();
-    Aws::SimpleStringStream ss;
-    ss << "Good ";
-    ss << v.GetString("time");
+    Aws::SimpleStringStream message;
+    message << "Hello World!";
+
+    Aws::SimpleStringStream dmtxVersion;
+    dmtxVersion << DmtxVersion;
+
+    Aws::SimpleStringStream cvVersion;
+    cvVersion << CV_VERSION;
+
+    Aws::SimpleStringStream torchVersion;
+    torchVersion << TORCH_VERSION_MAJOR << "." << TORCH_VERSION_MINOR << "." << TORCH_VERSION_PATCH;
 
     JsonValue resp;
-    resp.WithString("message", ss.str());
+    resp.WithString("message", message.str());
+    resp.WithString("dmtx_version", dmtxVersion.str());
+    resp.WithString("cv_version", cvVersion.str());
+    resp.WithString("torch_version", torchVersion.str());
 
     return invocation_response::success(resp.View().WriteCompact(), "application/json");
 }
