@@ -1,0 +1,64 @@
+FROM ubuntu:22.04
+
+WORKDIR /tmp
+
+# Install AWS C++ SDK
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install git cmake g++ make libcurl4-openssl-dev libssl-dev uuid-dev zlib1g-dev libpulse-dev -y
+RUN git clone --recurse-submodules https://github.com/aws/aws-sdk-cpp && \
+    mkdir sdk_build && \
+    cd sdk_build && \
+    cmake ../aws-sdk-cpp -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=/usr/local/ -DCMAKE_INSTALL_PREFIX=/usr/local/ && \
+    make && \
+    make install
+
+# Install AWS C++ Lambda Runtime
+RUN git clone https://github.com/awslabs/aws-lambda-cpp.git && \
+    cd aws-lambda-cpp && \
+    mkdir build && \
+    cd build && \
+    mkdir -p /usr/local/lambda-install && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/lambda-install && \
+    make && \
+    make install
+
+# Install Libdmtx
+RUN apt-get install libtool autoconf -y
+RUN git clone --depth 1 --branch v0.7.7 https://github.com/dmtx/libdmtx.git && \
+    cd libdmtx && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install
+
+# Install Opencv
+RUN apt-get install cmake g++ wget unzip -y
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.x.zip && \
+    wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.x.zip && \
+    unzip opencv.zip && \
+    unzip opencv_contrib.zip && \
+    mkdir build && \
+    cd build && \
+    cmake -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.x/modules ../opencv-4.x && \
+    cmake --build . && \
+    make && \
+    make install
+
+# Install NumCpp
+RUN apt-get install build-essential libboost-system-dev libboost-thread-dev libboost-program-options-dev libboost-test-dev -y
+RUN git clone https://github.com/dpilger26/NumCpp.git && \
+    cd NumCpp && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    cmake --build . --target install
+
+# Install torch
+RUN wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.13.1%2Bcpu.zip -O libtorch.zip && \
+    unzip libtorch.zip && \
+    mv libtorch/ /usr/local/
+
+WORKDIR /root
+
+# ENTRYPOINT ["tail"]
+# CMD ["-f","/dev/null"]

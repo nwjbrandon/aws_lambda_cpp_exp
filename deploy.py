@@ -8,7 +8,6 @@ lambda_functions = {
     "test": {"timeout": 60, "memory_size": 10240,},
 }
 
-
 def update_lambda_functions_image_uri():
     for function_name in lambda_functions:
         response = client.update_function_code(
@@ -16,8 +15,5 @@ def update_lambda_functions_image_uri():
         )
         print(response)
 
-
-
 if __name__ == "__main__":
     update_lambda_functions_image_uri()
-    # update_lambda_functions_configurations()
