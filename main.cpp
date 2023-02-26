@@ -19,15 +19,12 @@ invocation_response my_handler(invocation_request const& request)
     if (!json.WasParseSuccessful()) {
         return invocation_response::failure("Failed to parse input JSON", "InvalidJSON");
     }
-    std::cout << "Hello World!" << std::endl;
-
-    std::cout << "Test Numpy!" << std::endl;
-    auto a = nc::random::randInt<int>({10, 10}, 0, 100);
-    std::cout << a <<std::endl;
+    auto event_message = json.View().GetString("message");
+    std::cout << event_message << std::endl;
 
     auto v = json.View();
     Aws::SimpleStringStream message;
-    message << "Hello World!";
+    message << event_message;
 
     Aws::SimpleStringStream dmtxVersion;
     dmtxVersion << DmtxVersion;
@@ -38,11 +35,15 @@ invocation_response my_handler(invocation_request const& request)
     Aws::SimpleStringStream torchVersion;
     torchVersion << TORCH_VERSION_MAJOR << "." << TORCH_VERSION_MINOR << "." << TORCH_VERSION_PATCH;
 
+    Aws::SimpleStringStream currentDate;
+    currentDate << nc::DateTime::now().toStr();
+
     JsonValue resp;
     resp.WithString("message", message.str());
     resp.WithString("dmtx_version", dmtxVersion.str());
     resp.WithString("cv_version", cvVersion.str());
     resp.WithString("torch_version", torchVersion.str());
+    resp.WithString("current_date", currentDate.str());
 
     return invocation_response::success(resp.View().WriteCompact(), "application/json");
 }

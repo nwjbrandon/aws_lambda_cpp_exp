@@ -8,14 +8,13 @@ client = boto3.client("lambda")
 
 function_name = "test"
 
-payload = {
-    "time": "event",
-}
-print(payload)
-
 total_duration = 0
 n = 10
 for i in range(n):
+    payload = {
+        "message": f"Hello World {i}!",
+    }
+    print(payload)
     start_time = time.time()
     response = client.invoke(
         FunctionName=function_name,
