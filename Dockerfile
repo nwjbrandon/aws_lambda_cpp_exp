@@ -1,5 +1,13 @@
+FROM public.ecr.aws/lambda/provided:al2 as build
+
+COPY build/api.zip api.zip
+
+RUN yum install unzip -y
+
+RUN unzip api.zip -d /tmp
+
 FROM public.ecr.aws/lambda/provided:al2
-COPY bin/ bin/
-COPY lib/ lib/
-COPY bootstrap bootstrap
+
+COPY --from=build /tmp/bin /tmp/lib /tmp/bootstrap ./
+
 ENTRYPOINT [ "./bootstrap" ]  

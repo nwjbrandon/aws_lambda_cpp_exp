@@ -20,4 +20,3 @@ def update_lambda_functions_image_uri():
 
 if __name__ == "__main__":
     update_lambda_functions_image_uri()
-    # update_lambda_functions_configurations()
